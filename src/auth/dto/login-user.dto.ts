@@ -22,7 +22,7 @@ export class LoginUserDto {
   readonly email: string;
 
   @ApiProperty({
-    default: 'test123aA@',
+    default: '123456aA@',
     description: 'password of the user',
     required: true,
   })

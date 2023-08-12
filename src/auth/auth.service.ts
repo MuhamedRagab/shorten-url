@@ -46,7 +46,7 @@ export class AuthService {
     const isPasswordValid = compareSync(user.password, userExists.password);
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid credentials.', {
-        description: 'Password is invalid.',
+        description: 'User or Password is invalid.',
       });
     }
     delete userExists.password;
