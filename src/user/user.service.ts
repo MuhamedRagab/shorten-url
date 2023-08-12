@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/entities/user.entity';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
@@ -18,6 +18,9 @@ export class UserService {
 
   async getUser(getUserBy: getUserByType): Promise<UserEntity> {
     const user = await this.userRepository.findOneBy(getUserBy);
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
 
     return user;
   }

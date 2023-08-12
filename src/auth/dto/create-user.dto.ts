@@ -25,10 +25,7 @@ export class CreateUserDto {
     required: true,
     uniqueItems: true,
   })
-  @IsEmail(
-    { domain_specific_validation: true },
-    { message: 'email must be valid' },
-  )
+  @IsEmail()
   @IsNotEmpty()
   readonly email: string;
 

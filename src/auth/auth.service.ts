@@ -16,11 +16,8 @@ export class AuthService {
   ) {}
 
   async signUp(user: CreateUserDto): Promise<UserWithToken> {
-    const userExists = await this.userService.getUser({ email: user.email });
-
-    if (userExists) {
-      throw new BadRequestException('User already exists.');
-    }
+    // Check if user already exists
+    await this.userService.getUser({ email: user.email });
 
     const hashedPassword = hashSync(user.password, genSaltSync());
     const userToCreate = {
@@ -40,13 +37,10 @@ export class AuthService {
       email: user.email,
     });
 
-    if (!userExists) {
-      throw new BadRequestException('User not found.');
-    }
     const isPasswordValid = compareSync(user.password, userExists.password);
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid credentials.', {
-        description: 'User or Password is invalid.',
+        description: 'Email or Password is invalid.',
       });
     }
     delete userExists.password;
