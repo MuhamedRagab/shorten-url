@@ -6,21 +6,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { UserService } from 'src/user/user.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const token = this.extractTokenFromHeader(req);
 
     try {
-      const payload = this.jwtService.verify(token) as { id: string };
-      const user = await this.userService.getUser({ id: payload.id });
+      const { sub } = this.jwtService.verify(token) as { sub: string };
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: sub },
+      });
 
       if (!user) {
         throw new BadRequestException('User not found', {

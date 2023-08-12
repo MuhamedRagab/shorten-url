@@ -1,25 +1,21 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
-import { typeormModuleOptions } from './configs/typeorm.config';
-import { UserModule } from './user/user.module';
-import { configModule } from './configs/configModule.config';
+import { configModule } from './config/configModule.config';
 import { FakeModule } from './fake/fake.module';
-import { throttlerConfig } from './configs/throttler.config';
+import { throttlerConfig } from './config/throttler.config';
+import { PrismaModule } from './prisma/prisma.module';
+import { UrlsModule } from './url/url.module';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot(throttlerConfig),
     ConfigModule.forRoot(configModule),
-    TypeOrmModule.forRootAsync({
-      useFactory: typeormModuleOptions,
-      inject: [ConfigService],
-    }),
     AuthModule,
-    UserModule,
+    UrlsModule,
+    PrismaModule,
     FakeModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

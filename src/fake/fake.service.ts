@@ -1,31 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
-import { UrlEntity } from 'src/entities/url.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { fakeUser } from './data/user.fake';
 import { fakeUrls } from './data/urls.fake';
 import { genSaltSync, hashSync } from 'bcrypt';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FakeService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-    @InjectRepository(UrlEntity)
-    private urlRepository: Repository<UrlEntity>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createFakeUser(): Promise<void> {
+    const userExist = await this.prisma.user.findUnique({
+      where: { email: fakeUser.email },
+    });
+
+    if (userExist) return;
+
     const hashedPassword = hashSync(fakeUser.password, genSaltSync());
     fakeUser.password = hashedPassword;
 
-    await this.userRepository.save(fakeUser);
+    await this.prisma.user.create({ data: fakeUser });
   }
 
   async createFakeUrls(): Promise<void> {
-    for (const url of fakeUrls) {
-      await this.urlRepository.save(url);
-    }
+    const urlsExist = await this.prisma.url.findMany();
+
+    if (urlsExist.length > 0) return;
+
+    await this.prisma.url.createMany({ data: fakeUrls });
   }
 }

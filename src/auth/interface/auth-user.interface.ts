@@ -1,5 +1,5 @@
-import { UserEntity } from 'src/entities/user.entity';
+import { User } from '@prisma/client';
 
-export interface UserWithToken extends UserEntity {
+export interface UserWithToken extends User {
   token: string;
 }

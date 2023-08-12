@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { jwtConfig } from 'src/configs/jwt.config';
+import { jwtConfig } from 'src/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthMiddleware } from 'src/middleware/auth.middleware';
 import { UrlController } from 'src/url/url.controller';

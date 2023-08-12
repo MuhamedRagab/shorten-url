@@ -1,38 +1,38 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UrlEntity } from 'src/entities/url.entity';
-import { Repository } from 'typeorm';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { randomUUID } from 'crypto';
-import { UserService } from 'src/user/user.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Url } from '@prisma/client';
 
 @Injectable()
 export class UrlService {
-  constructor(
-    @InjectRepository(UrlEntity)
-    private readonly urlRepository: Repository<UrlEntity>,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async findUserUrls(userId: string): Promise<UrlEntity[] | []> {
-    const user = await this.userService.getUser({ id: userId });
+  async findUserUrls(userId: string): Promise<Url[] | []> {
+    const urls = await this.prisma.url.findMany({ where: { userId } });
 
-    if (!user) {
-      throw new BadRequestException('User not found.');
+    if (urls.length === 0) {
+      throw new BadRequestException('Url not found.');
     }
 
-    return await this.urlRepository.findBy({ userId });
+    return urls;
   }
 
-  async createUrl({ url, userId }: CreateUrlDto): Promise<UrlEntity> {
-    const userExist = await this.userService.getUser({ id: userId });
+  async createUrl({ url, userId }: CreateUrlDto): Promise<Url> {
+    const userExist = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
     if (!userExist) {
-      throw new BadRequestException('User not found.', {
-        description: `User with id ${userId} not found`,
+      throw new BadRequestException('Url not found.', {
+        description: `Url with id ${userId} not found`,
       });
     }
 
-    const isUrlExist = await this.urlRepository.findOneBy({ url, userId });
+    const isUrlExist = await this.prisma.url.findFirst({
+      where: { url, userId },
+    });
+
     if (isUrlExist) {
       throw new BadRequestException('Url already exist', {
         description: `${url} already exist and shortened to ${isUrlExist.shortUrl}`,
@@ -40,11 +40,13 @@ export class UrlService {
     }
 
     const shortUrl = await this.getUniqueShortUrl(userId);
-    const newUrl = await this.urlRepository.save({
-      url,
-      userId,
-      id: randomUUID(),
-      shortUrl,
+    const newUrl = await this.prisma.url.create({
+      data: {
+        url,
+        userId,
+        id: randomUUID(),
+        shortUrl,
+      },
     });
 
     return newUrl;
@@ -52,9 +54,8 @@ export class UrlService {
 
   private async getUniqueShortUrl(userId: string) {
     const shortUrl = randomUUID().slice(0, 5);
-    const isShortUrlExist = await this.urlRepository.findOneBy({
-      shortUrl,
-      userId,
+    const isShortUrlExist = await this.prisma.url.findFirst({
+      where: { shortUrl, userId },
     });
 
     if (isShortUrlExist) {
@@ -64,15 +65,15 @@ export class UrlService {
     return shortUrl;
   }
 
-  async deleteUrl(id: string): Promise<UrlEntity> {
-    const url = await this.urlRepository.findOneBy({ id });
+  async deleteUrl(id: string): Promise<Url> {
+    const url = await this.prisma.url.findFirst({ where: { id } });
 
     if (!url) {
       throw new BadRequestException('Url not found', {
         description: `Url with id ${id} not found`,
       });
     }
-    await this.urlRepository.delete(id);
+    await this.prisma.url.delete({ where: { id } });
 
     return url;
   }
