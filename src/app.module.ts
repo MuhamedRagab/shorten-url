@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
-import { dbConfig } from './configs/db.config';
+import { typeormModuleOptions } from './configs/typeorm.config';
 import { UserModule } from './user/user.module';
 import { configModule } from './configs/configModule.config';
 import { FakeModule } from './fake/fake.module';
@@ -15,7 +15,7 @@ import { throttlerConfig } from './configs/throttler.config';
     ThrottlerModule.forRoot(throttlerConfig),
     ConfigModule.forRoot(configModule),
     TypeOrmModule.forRootAsync({
-      useFactory: (config: ConfigService) => dbConfig(config),
+      useFactory: typeormModuleOptions,
       inject: [ConfigService],
     }),
     AuthModule,

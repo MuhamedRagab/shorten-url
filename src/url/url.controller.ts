@@ -1,5 +1,5 @@
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreateUrlDto } from './dtos/create-url.dto';
+import { CreateUrlDto } from './dto/create-url.dto';
 import { UrlService } from './url.service';
 import {
   Body,

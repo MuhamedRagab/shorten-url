@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UrlEntity } from 'src/entities/url.entity';
 import { Repository } from 'typeorm';
-import { CreateUrlDto } from './dtos/create-url.dto';
+import { CreateUrlDto } from './dto/create-url.dto';
 import { randomUUID } from 'crypto';
 import { UserService } from 'src/user/user.service';
 
