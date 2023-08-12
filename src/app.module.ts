@@ -9,7 +9,6 @@ import { UserModule } from './user/user.module';
 import { configModule } from './configs/configModule.config';
 import { FakeModule } from './fake/fake.module';
 import { throttlerConfig } from './configs/throttler.config';
-import { DestinationModule } from './destination/destination.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { DestinationModule } from './destination/destination.module';
     AuthModule,
     UserModule,
     FakeModule,
-    DestinationModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
