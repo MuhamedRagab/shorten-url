@@ -25,10 +25,14 @@ export class UrlService {
   }
 
   async createUrl({ url, userId }: CreateUrlDto): Promise<UrlEntity> {
-    // Check if user exists
-    await this.userService.getUser({ id: userId });
-    const isUrlExist = await this.urlRepository.findOneBy({ url, userId });
+    const userExist = await this.userService.getUser({ id: userId });
+    if (!userExist) {
+      throw new BadRequestException('User not found.', {
+        description: `User with id ${userId} not found`,
+      });
+    }
 
+    const isUrlExist = await this.urlRepository.findOneBy({ url, userId });
     if (isUrlExist) {
       throw new BadRequestException('Url already exist', {
         description: `${url} already exist and shortened to ${isUrlExist.shortUrl}`,

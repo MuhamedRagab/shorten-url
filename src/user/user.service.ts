@@ -18,9 +18,6 @@ export class UserService {
 
   async getUser(getUserBy: getUserByType): Promise<UserEntity> {
     const user = await this.userRepository.findOneBy(getUserBy);
-    if (!user) {
-      throw new BadRequestException('User not found.');
-    }
 
     return user;
   }
