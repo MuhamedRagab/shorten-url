@@ -23,7 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:migrate": "npx prisma migrate dev --name init",
     "prisma:generate": "npx prisma generate",
-    "prisma:db": "npx prisma db push --preview-feature",
+    "prisma:push": "npx prisma db push",
     "prisma:studio": "npx prisma studio",
     "prisma:reset": "npx prisma migrate reset --force"
   },
