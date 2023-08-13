@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { configModule } from './config/configModule.config';
-import { FakeModule } from './fake/fake.module';
 import { throttlerConfig } from './config/throttler.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { UrlsModule } from './url/url.module';
@@ -16,7 +15,6 @@ import { UrlsModule } from './url/url.module';
     AuthModule,
     UrlsModule,
     PrismaModule,
-    FakeModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
