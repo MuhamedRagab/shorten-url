@@ -16,9 +16,15 @@ export class AuthMiddleware implements NestMiddleware {
     const token = this.extractTokenFromHeader(req);
 
     try {
-      const { sub } = this.jwtService.verify(token) as { sub: string };
+      const { sub } = this.jwtService.verify(token);
 
-      const user = await this.prisma.user.findUnique({
+      if (!sub) {
+        throw new UnauthorizedException('Invalid token', {
+          description: 'Invalid token',
+        });
+      }
+
+      const user = await this.prisma.user.findUniqueOrThrow({
         where: { id: sub },
       });
 

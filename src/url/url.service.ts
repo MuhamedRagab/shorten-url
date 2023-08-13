@@ -12,7 +12,9 @@ export class UrlService {
     const urls = await this.prisma.url.findMany({ where: { userId } });
 
     if (urls.length === 0) {
-      throw new BadRequestException('Url not found.');
+      throw new BadRequestException('Urls not found', {
+        description: `Urls for user with id ${userId} not found`,
+      });
     }
 
     return urls;
@@ -24,8 +26,8 @@ export class UrlService {
     });
 
     if (!userExist) {
-      throw new BadRequestException('Url not found.', {
-        description: `Url with id ${userId} not found`,
+      throw new BadRequestException('User not found.', {
+        description: `User with id ${userId} not found`,
       });
     }
 

@@ -20,7 +20,7 @@ export class AuthService {
       where: { email: user.email },
     });
     if (userExist) {
-      throw new BadRequestException('User not found.');
+      throw new BadRequestException('User already exists');
     }
 
     const hashedPassword = hashSync(user.password, genSaltSync());
@@ -59,7 +59,7 @@ export class AuthService {
   }
 
   private getUserWithToken(user: User): UserWithToken {
-    const token = this.jwtService.sign({ id: user.id });
+    const token = this.jwtService.sign({ sub: user.id });
     const userWithToken = { ...user, token };
 
     return userWithToken;

@@ -40,7 +40,7 @@ export class CreateUserDto {
   readonly fullName: string;
 
   @ApiProperty({
-    default: 'test123aA@',
+    default: '123456aA@',
     description: 'password of the user',
     required: true,
   })
